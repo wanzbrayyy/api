@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
 <body>
     <div id="loading-overlay">
@@ -21,8 +20,8 @@
             <input type="text" id="apiSearchInput" placeholder="Search API...">
         </div>
         <div class="navbar-icons">
-            <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Theme">
-                <i class="fas fa-moon"></i>
+            <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Theme">
+                <i class="fas fa-sun"></i> 
             </button>
             <i class="fas fa-bell"></i>
         </div>
@@ -31,7 +30,7 @@
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <span>WANZOFC TECT Api</span>
-            <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close menu">×</button>
+            <button class="sidebar-close-btn" id="sidebarCloseBtn">×</button>
         </div>
         <span class="version">v1.0.0</span>
         <div class="online-status">Online!</div>
@@ -105,6 +104,33 @@
         "formattedMessage": "STRING (User-friendly formatted mutations)"
     },
     "message": "QRIS status successfully retrieved."
+}</code></pre>
+            </div>
+            <div class="doc-item">
+                <h4><i class="fas fa-robot"></i> OPEN AI (GPT-4.1 series)</h4>
+                <p><strong>Endpoint:</strong> <code>POST /api/ai/pollinations</code></p>
+                <p><strong>Description:</strong> Interact with various GPT-4.1 models from Pollinations AI. Supports text and optional image input.</p>
+                <p><strong>Request Body (JSON):</strong></p>
+                <pre><code>{
+    "question": "STRING (Your question or prompt, required)",
+    "systemMessage": "STRING (Optional system message to guide the AI)",
+    "model": "STRING (Optional, defaults to 'gpt-4.1-mini'. Available: 'gpt-4.1', 'gpt-4.1-mini', 'gpt-4.1-nano')",
+    "imageBase64": "STRING (Optional, Base64 encoded image string, without 'data:image/...;base64,' prefix)"
+}</code></pre>
+                <p><strong>Success Response (JSON):</strong></p>
+                <pre><code>{
+    "status": true,
+    "creator": "WANZOFC TECT",
+    "result": {
+        "response": "STRING (AI's generated response)"
+    },
+    "message": "AI response successfully generated."
+}</code></pre>
+                 <p><strong>Error Response (JSON):</strong></p>
+                <pre><code>{
+    "status": false,
+    "creator": "WANZOFC TECT",
+    "message": "STRING (Error description)"
 }</code></pre>
             </div>
         </div>
