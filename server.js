@@ -1,0 +1,70 @@
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
+const { createQRIS, checkQRISStatus } = require('./qris_handler');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.post('/api/qris/create', async (req, res) => {
+    const { amount, codeqr } = req.body;
+    if (!amount || !codeqr) {
+        return res.status(400).json({ 
+            status: false, 
+            creator: "WANZOFC TECT", 
+            message: 'Amount and codeqr are required.' 
+        });
+    }
+    try {
+        const result = await createQRIS(amount, codeqr);
+        if (result.status) {
+            res.json(result);
+        } else {
+            res.status(400).json(result); 
+        }
+    } catch (error) {
+        res.status(500).json({ 
+            status: false, 
+            creator: "WANZOFC TECT", 
+            message: error.message || 'Internal server error.' 
+        });
+    }
+});
+
+app.get('/api/qris/status', async (req, res) => {
+    const { merchantId, apiKey } = req.query;
+    if (!merchantId || !apiKey) {
+        return res.status(400).json({ 
+            status: false, 
+            creator: "WANZOFC TECT", 
+            message: 'merchantId and apiKey are required.' 
+        });
+    }
+    try {
+        const result = await checkQRISStatus(merchantId, apiKey);
+        if (result.status) {
+            res.json(result);
+        } else {
+            res.status(400).json(result);
+        }
+    } catch (error) {
+        res.status(500).json({ 
+            status: false, 
+            creator: "WANZOFC TECT", 
+            message: error.message || 'Internal server error.' 
+        });
+    }
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.listen(PORT, () => {
+    console.log(`WANZOFC TECT API server running on http://localhost:${PORT}`);
+});

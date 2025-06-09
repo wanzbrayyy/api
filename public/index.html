@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WANZOFC TECT - REST API</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+    <div id="loading-overlay">
+        <div class="loader"></div>
+    </div>
+
+    <div class="top-navbar">
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input type="text" id="apiSearchInput" placeholder="Search API...">
+        </div>
+        <div class="navbar-icons">
+            <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <i class="fas fa-bell"></i>
+        </div>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span>WANZOFC TECT Api</span>
+            <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close menu">×</button>
+        </div>
+        <span class="version">v1.0.0</span>
+        <div class="online-status">Online!</div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-target="home-content"><i class="fas fa-home"></i> Home</a>
+            <a href="#" class="nav-item" data-target="apis-content"><i class="fas fa-plug"></i> APIs</a>
+            <a href="https://github.com/wanzofficial" target="_blank" class="nav-item"><i class="fab fa-github"></i> GitHub</a>
+            <a href="#docs-content" class="nav-item" data-target="docs-content"><i class="fas fa-book"></i> Docs</a>
+        </nav>
+    </div>
+
+    <main class="content" id="mainContent">
+        <div class="content-section active-content" id="home-content">
+             <div class="welcome-hero">
+                <h1>Welcome to WANZOFC TECT API</h1>
+                <p>Powerful & Easy to use REST APIs.</p>
+            </div>
+            <h2 class="section-title"><i class="fas fa-rocket"></i> Quick Access</h2>
+             <div class="api-list">
+                </div>
+        </div>
+
+        <div class="content-section" id="apis-content">
+            <h2 class="section-title"><i class="fas fa-th-list"></i> Available APIs</h2>
+            <div class="api-list">
+            </div>
+        </div>
+        
+        <div class="content-section" id="docs-content">
+            <h2 class="section-title"><i class="fas fa-file-alt"></i> API Documentation</h2>
+            <div class="doc-item">
+                <h4><i class="fas fa-qrcode"></i> Create Dynamic QRIS</h4>
+                <p><strong>Endpoint:</strong> <code>POST /api/qris/create</code></p>
+                <p><strong>Description:</strong> Generates a QRIS code that includes a specific transaction amount.</p>
+                <p><strong>Request Body (JSON):</strong></p>
+                <pre><code>{
+    "amount": "NUMBER (e.g., 10000)",
+    "codeqr": "STRING (Your base static QRIS code string)"
+}</code></pre>
+                <p><strong>Success Response (JSON):</strong></p>
+                <pre><code>{
+    "status": true,
+    "creator": "WANZOFC TECT",
+    "result": {
+        "transactionId": "WZFC-XXXXXXXX",
+        "amount": 10000,
+        "currency": "IDR",
+        "expirationTime": "YYYY-MM-DDTHH:mm:ss.sssZ",
+        "qrImageUrl": "https://url.to.catbox.image/qr.png",
+        "qrString": "FULL_DYNAMIC_QRIS_STRING"
+    },
+    "message": "QRIS successfully generated."
+}</code></pre>
+            </div>
+             <div class="doc-item">
+                <h4><i class="fas fa-search-dollar"></i> Check QRIS Mutation Status</h4>
+                <p><strong>Endpoint:</strong> <code>GET /api/qris/status</code></p>
+                <p><strong>Description:</strong> Retrieves the latest transaction mutations for your QRIS account (via OkeConnect).</p>
+                <p><strong>Query Parameters:</strong></p>
+                <ul>
+                    <li><code>merchantId</code> (string, required): Your OkeConnect Merchant ID.</li>
+                    <li><code>apiKey</code> (string, required): Your OkeConnect API Key.</li>
+                </ul>
+                <p>Example: <code>/api/qris/status?merchantId=YOUR_ID&apiKey=YOUR_KEY</code></p>
+                <p><strong>Success Response (JSON):</strong></p>
+                <pre><code>{
+    "status": true,
+    "creator": "WANZOFC TECT",
+    "result": {
+        "mutations": [ /* Array of mutation objects */ ],
+        "formattedMessage": "STRING (User-friendly formatted mutations)"
+    },
+    "message": "QRIS status successfully retrieved."
+}</code></pre>
+            </div>
+        </div>
+    </main>
+
+    <div id="apiModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">API Title</h3>
+                <span class="close-button">×</span>
+            </div>
+            <p id="modalDescription" class="modal-subtitle">API Description</p>
+            <hr>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="modalEndpoint">Endpoint</label>
+                    <div class="endpoint-display">
+                        <input type="text" id="modalEndpoint" readonly>
+                        <button id="copyEndpointBtn" title="Copy Endpoint"><i class="fas fa-copy"></i></button>
+                    </div>
+                </div>
+                <div class="parameters-section">
+                    <h4><i class="fas fa-sliders-h"></i> Parameters</h4>
+                    <div id="modalParamsContainer">
+                    </div>
+                </div>
+                <button id="modalSubmit" class="submit-btn"><i class="fas fa-paper-plane"></i> Submit</button>
+                <div class="response-section">
+                    <h4><i class="fas fa-code"></i> Response 
+                        <button id="copyResponseBtn" title="Copy Response" style="display:none; margin-left:10px; background:none; border:none; color: var(--primary-color); cursor:pointer;"><i class="fas fa-copy"></i></button>
+                    </h4>
+                    <div id="modalResponse" class="response-box">
+                        Click "Submit" to see the response.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastNotification" class="toast">
+        <i class="fas fa-check-circle toast-icon"></i>
+        <span id="toastMessage">Message here</span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
